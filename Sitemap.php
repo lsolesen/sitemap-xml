@@ -5,9 +5,11 @@
  * Helper class to create sitemap in the special format supported by MSN, Yahoo and Google.
  * More information can be found on {@link http://www.sitemaps.org/}.
  *
+ * The protocol is described on {@link http://www.sitemaps.org/protocol.php}
+ *
  * @package   Services_Sitemap
- * @author    Svetoslav Marinov <svetoslav.marinov@gmail.com>
- * @copyright 2005
+ * @author    Lars Olesen <lars@legestue.net>
+ * @copyright 2007 the author
  * @version   @package-version@
  * @link      http://devquickref.com
  */
@@ -20,17 +22,18 @@
  * </code>
  *
  * @package   Services_Sitemap
- * @author    Svetoslav Marinov <svetoslav.marinov@gmail.com>
- * @copyright 2005
+ * @author    Lars Olesen <lars@legestue.net>
+ * @copyright 2007 the author
  * @version   @package-version@
  * @link      http://devquickref.com
+ * @example   example.php
  */
 class Services_Sitemap
 {
-    private $header = "<\x3Fxml version=\"1.0\" encoding=\"UTF-8\"\x3F>\n<urlset xmlns=\"http://www.google.com/schemas/sitemap/0.84\">";
-    public $charset = "UTF-8";
-    private $footer = "</urlset>\n";
-    private $items = array();
+    private $header  = "<\x3Fxml version=\"1.0\" encoding=\"UTF-8\"\x3F>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
+    public  $charset = "UTF-8";
+    private $footer  = "</urlset>\n";
+    private $items   = array();
 
     public function __construct()
     {
@@ -40,21 +43,21 @@ class Services_Sitemap
     /**
      * Adds a new item to the channel contents
      *
-     * @param google_sitemap item $new_item
+     * @param object $item Services_Sitemap_Item
      *
      */
-    public function add_item(Services_Sitemap_Item $new_item){
+    public function add_item(Services_Sitemap_Item $item){
         $this->items[] = $new_item;
     }
 
     /**
-     * Generates the sitemap XML data based on object properties.
+     * Generates the sitemap XML data based on object properties
      *
-     * @param string $file_name ( optional ) if file name is supplied the XML data is saved in it otherwise returned as a string.
+     * @param string $file_name (optional) if file name is supplied the XML data is saved in it otherwise returned as a string.
      *
      * @return [void|string]
      */
-    public function build( $file_name = null )
+    public function build($file_name = null)
     {
         $map = $this->header . "\n";
 
@@ -63,15 +66,15 @@ class Services_Sitemap
             $map .= "<url>\n<loc>$item->loc</loc>\n";
 
             // lastmod
-            if ( !empty( $item->lastmod ) )
+            if (!empty($item->lastmod))
                 $map .= "<lastmod>$item->lastmod</lastmod>\n";
 
             // changefreq
-            if ( !empty( $item->changefreq ) )
+            if (!empty($item->changefreq))
                 $map .= "<changefreq>$item->changefreq</changefreq>\n";
 
             // priority
-            if ( !empty( $item->priority ) )
+            if (!empty($item->priority))
                 $map .= "<priority>$item->priority</priority>\n";
 
             $map .= "</url>\n\n";
@@ -103,17 +106,17 @@ class Services_Sitemap
  */
 class Services_Sitemap_Item
 {
-  /**
-   * Assigns constructor parameters to their corresponding object properties.
-   *
-   * @param string $loc location
-   * @param string $lastmod date (optional) format in YYYY-MM-DD or in "ISO 8601" format
-   * @param string $changefreq (optional)( always,hourly,daily,weekly,monthly,yearly,never )
-   * @param string $priority (optional) current link's priority ( 0.0-1.0 )
-   *
-   * @return void
-   */
-    function __construct( $loc, $lastmod = '', $changefreq = '', $priority = '' )
+    /**
+     * Assigns constructor parameters to their corresponding object properties.
+     *
+     * @param string $loc location
+     * @param string $lastmod date (optional) format in YYYY-MM-DD or in "ISO 8601" format
+     * @param string $changefreq (optional)( always,hourly,daily,weekly,monthly,yearly,never )
+     * @param string $priority (optional) current link's priority ( 0.0-1.0 )
+     *
+     * @return void
+     */
+    public function __construct( $loc, $lastmod = '', $changefreq = '', $priority = '' )
     {
         $this->loc = $loc;
         $this->lastmod = $lastmod;
